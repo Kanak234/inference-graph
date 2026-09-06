@@ -1,0 +1,10 @@
+.vscode/**
+src/**
+scripts/**
+tools/**
+node_modules/**
+**/*.map
+**/*.ts
+tsconfig.json
+tests/**
+harness.js

@@ -1,0 +1,248 @@
+{
+  "name": "inference-graph",
+  "displayName": "Inference Graph",
+  "description": "Open a network spec and watch a signal cross every layer in 3D. Click a unit to jump to the line that defines it.",
+  "version": "1.0.0",
+  "publisher": "kanak",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#070a11",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kanak234/inference-graph.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kanak234/inference-graph/issues"
+  },
+  "homepage": "https://github.com/Kanak234/inference-graph#readme",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Visualization",
+    "Data Science",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "neural network",
+    "transformer",
+    "visualization",
+    "three.js",
+    "inference"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:json",
+    "onLanguage:jsonc"
+  ],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "inferenceGraph.editor",
+        "displayName": "Inference Graph",
+        "selector": [
+          {
+            "filenamePattern": "*.netgraph.json"
+          },
+          {
+            "filenamePattern": "*.netgraph"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "inferenceGraph.open",
+        "title": "Open Inference Graph",
+        "category": "Inference Graph",
+        "icon": "$(circuit-board)"
+      },
+      {
+        "command": "inferenceGraph.runInference",
+        "title": "Run Inference",
+        "category": "Inference Graph",
+        "icon": "$(play)"
+      },
+      {
+        "command": "inferenceGraph.newInput",
+        "title": "New Input Vector",
+        "category": "Inference Graph",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "inferenceGraph.tracePath",
+        "title": "Trace Decision Path",
+        "category": "Inference Graph",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "inferenceGraph.exportTrace",
+        "title": "Export Trace as JSON",
+        "category": "Inference Graph",
+        "icon": "$(save-as)"
+      },
+      {
+        "command": "inferenceGraph.fetchLiveTrace",
+        "title": "Pull Trace from Endpoint",
+        "category": "Inference Graph",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "inferenceGraph.newSpecFile",
+        "title": "New Graph Spec File",
+        "category": "Inference Graph",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "inferenceGraph.revealLayer",
+        "title": "Reveal Layer in Editor",
+        "category": "Inference Graph"
+      },
+      {
+        "command": "inferenceGraph.focusLayer",
+        "title": "Focus Layer in Graph",
+        "category": "Inference Graph"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "inferenceGraph",
+          "title": "Inference Graph",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "inferenceGraph": [
+        {
+          "id": "inferenceGraph.layers",
+          "name": "Layers",
+          "icon": "media/icon.svg",
+          "contextualTitle": "Network Layers"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "inferenceGraph.layers",
+        "contents": "No graph spec is open.\n\nOpen a `.netgraph.json` file, or start from a template.\n[New graph spec file](command:inferenceGraph.newSpecFile)\n\nA spec is a JSON file with a `layers` array. Export one from PyTorch with `tools/export_torch_graph.py`."
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "inferenceGraph.open",
+          "when": "resourceExtname == .json && resourceFilename =~ /netgraph/",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "inferenceGraph.runInference",
+          "when": "view == inferenceGraph.layers",
+          "group": "navigation@1"
+        },
+        {
+          "command": "inferenceGraph.newInput",
+          "when": "view == inferenceGraph.layers",
+          "group": "navigation@2"
+        },
+        {
+          "command": "inferenceGraph.tracePath",
+          "when": "view == inferenceGraph.layers",
+          "group": "navigation@3"
+        },
+        {
+          "command": "inferenceGraph.exportTrace",
+          "when": "view == inferenceGraph.layers",
+          "group": "1_export"
+        },
+        {
+          "command": "inferenceGraph.fetchLiveTrace",
+          "when": "view == inferenceGraph.layers",
+          "group": "1_export"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "inferenceGraph.revealLayer",
+          "when": "view == inferenceGraph.layers && viewItem == layer",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "inferenceGraph.revealLayer",
+          "when": "false"
+        },
+        {
+          "command": "inferenceGraph.focusLayer",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Inference Graph",
+      "properties": {
+        "inferenceGraph.speed": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0.25,
+          "maximum": 3,
+          "description": "How fast the signal crosses the network."
+        },
+        "inferenceGraph.glow": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render the bloom pass. Turn off on a low-power GPU."
+        },
+        "inferenceGraph.autoOrbit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Rotate the camera slowly while idle."
+        },
+        "inferenceGraph.labels": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show floating layer labels."
+        },
+        "inferenceGraph.syncCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Focus the layer under the cursor when you move through the spec file."
+        },
+        "inferenceGraph.revealOnClick": {
+          "type": "boolean",
+          "default": true,
+          "description": "Jump to the line that defines a layer when you click one of its units."
+        },
+        "inferenceGraph.traceEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "HTTP endpoint returning a live activation trace, e.g. http://127.0.0.1:8000/trace. Leave empty to run the forward pass locally."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vendor": "node scripts/vendor-three.js",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run vendor && npm run compile",
+    "package": "vsce package",
+    "test": "node tests/render-smoke.js",
+    "verify": "npm run vendor && npm run compile && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.84.0",
+    "jsdom": "^24.0.0",
+    "three": "0.128.0",
+    "typescript": "^5.3.3"
+  }
+}

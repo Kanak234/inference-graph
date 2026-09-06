@@ -1,0 +1,14 @@
+{
+  "meta": { "name": "wide-mlp", "note": "a plain classifier, no attention" },
+  "seed": 77,
+  "layers": [
+    { "id": "in", "name": "Features", "kind": "input", "n": 12 },
+    { "id": "h1", "name": "Dense 1", "kind": "ffn", "n": 32 },
+    { "id": "r1", "name": "ReLU", "kind": "relu", "n": 32 },
+    { "id": "h2", "name": "Dense 2", "kind": "ffn", "n": 24 },
+    { "id": "r2", "name": "ReLU", "kind": "relu", "n": 24, "residualFrom": "h1" },
+    { "id": "h3", "name": "Dense 3", "kind": "ffn", "n": 16 },
+    { "id": "out", "name": "Classes", "kind": "output", "n": 4,
+      "labels": ["Safe", "Suspicious", "Malicious", "Unknown"] }
+  ]
+}
