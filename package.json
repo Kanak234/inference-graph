@@ -236,7 +236,8 @@
     "vscode:prepublish": "npm run vendor && npm run compile",
     "package": "vsce package",
     "test": "node tests/render-smoke.js",
-    "verify": "npm run vendor && npm run compile && npm test"
+    "verify": "npm run vendor && npm run compile && npm test",
+    "build": "npm run compile"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
